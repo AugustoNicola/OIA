@@ -1,0 +1,99 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "compilar unico archivo (windows)",
+            "command": "C:\\Program Files (x86)\\mingw-w64\\i686-8.1.0-posix-sjlj-rt_v6-rev0\\mingw32\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+            ],
+            "options": {
+                "cwd": "C:\\Program Files (x86)\\mingw-w64\\i686-8.1.0-posix-sjlj-rt_v6-rev0\\mingw32\\bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "compilar directorio (windows)",
+            "command": "C:\\Program Files (x86)\\mingw-w64\\i686-8.1.0-posix-sjlj-rt_v6-rev0\\mingw32\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "${fileDirname}\\*.cpp",
+                "-o",
+                "${fileDirname}\\output.exe"
+            ],
+            "options": {
+                "cwd": "C:\\Program Files (x86)\\mingw-w64\\i686-8.1.0-posix-sjlj-rt_v6-rev0\\mingw32\\bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "compilar unico archivo (mac)",
+            "command": "/usr/bin/clang++",
+            "args": [
+				"-std=c++11",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "compilar directorio (mac)",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-g",
+                "${fileDirname}/*.cpp",
+                "-o",
+                "${fileDirname}/output"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "C/C++: g++ build active file",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
