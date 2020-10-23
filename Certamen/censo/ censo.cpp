@@ -12,7 +12,7 @@ int decada(int fecha) {
 }
 
 bool esmayor(int edad) {
-    return edad >= 18;
+    return (edad >= 18);
 }
 
 string nombrecompleto(string nombre, string apellido) {
@@ -26,4 +26,5 @@ int cantidadmayores(vector<int> &edades) {
         if(esmayor(persona)) contadorMayores++;
     }
     return contadorMayores;
+
 }

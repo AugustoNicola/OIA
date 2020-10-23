@@ -43,7 +43,6 @@
             "command": "/usr/bin/clang++",
             "args": [
 				"-std=c++11",
-                "-g",
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"

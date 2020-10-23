@@ -74,7 +74,7 @@
         "stopAtEntry": false,
         "cwd": "${fileDirname}",
         "environment": [],
-        "externalConsole": false,
+        "externalConsole": true,
         "MIMode": "lldb",
         "preLaunchTask": "compilar unico archivo (mac)"
       },
