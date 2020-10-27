@@ -16,21 +16,25 @@ int max(int x, int y)
 }
 int max(int x) {return x;}
 
-void algarin()
+void algarin(std::string nombreArchivo)
 {
 	int N, M;
 	std::vector<std::string> filas;
 	std::vector<std::vector<int>> grilla;
 
-	std::cin >> M >> N;
+	std::ifstream input;
+	input.open(nombreArchivo);
+
+	input >> M >> N;
 	filas.resize(M);
-	std::getline(std::cin,filas[0]); //dummy
+	std::getline(input,filas[0]); //dummy
 	
 	//guardar filas individuales
 	for(int i = 0; i < M; i++)
 	{
-		std::getline(std::cin,filas[i]);
+		std::getline(input,filas[i]);
 	}
+	input.close();
 	
 	//valores de inicio de la grilla
 	grilla.resize(M);
@@ -75,13 +79,13 @@ void algarin()
 	{
 		std::cout << "SIN SALIDA";
 	} else {
-		std::cout << numeroMaximoDeJoyas;
+		std::cout << "Joyas Maximas: " << numeroMaximoDeJoyas;
 	}
 
 }
 
 int main()
 {
-	algarin();
+	algarin("input.txt");
 	return 0;
 }

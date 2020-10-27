@@ -20,6 +20,7 @@ int analizarContenedor(int litrosRestantes, int contenedor)
 
 	while(true)
 	{
+		//std::cout << "\nELEMENTO " << contenedor;
 		// ? calcula la conexion mas baja de haber
 		conexion *conexionMasBaja = nullptr;
 		for(conexion &tuberia : conexiones[contenedor])
@@ -33,8 +34,10 @@ int analizarContenedor(int litrosRestantes, int contenedor)
 			}
 			
 		}
+		//std::cout << "\nCMB: " << (conexionMasBaja == nullptr ? -1 : conexionMasBaja->final);
 
 		// ? llena hasta encontrar una tuberia o el techo
+		//std::cout << "\ncapacidad: ANTES " << V[contenedor];
 		if(litrosRestantes > 0)
 		{
 			if(conexionMasBaja != nullptr)
@@ -47,6 +50,7 @@ int analizarContenedor(int litrosRestantes, int contenedor)
 
 				if(litrosLlenados > 0 && !contenedorActualConAgua)
 				{
+					//std::cout << " aumento++ ";
 					contadorTanques++;
 					contenedorActualConAgua = true;
 				}
@@ -58,11 +62,14 @@ int analizarContenedor(int litrosRestantes, int contenedor)
 
 				if(!contenedorActualConAgua && litrosLlenados != 0)
 				{
+					//std::cout << " aumento++ ";
 					contadorTanques++;
 					contenedorActualConAgua = true;
 				}
 			}
 		}
+		//std::cout << " // AHORA " << V[contenedor];
+		//std::cout << "\nLitros restantes: " << litrosRestantes;
 
 		// ? verifica si se puede seguir
 		if(litrosRestantes > 0 && conexionMasBaja != nullptr)
@@ -87,12 +94,15 @@ int main()
 	
 	int T, Q;
 
+	std::ifstream input;
+	input.open("input.txt");
+
 	// lectura de tanques y capacidades
-	std::cin >> T;
+	input >> T;
 	for(int i = 0; i < T; i++)
 	{
 		int Vi;
-		std::cin >> Vi;
+		input >> Vi;
 		V.push_back(Vi);
 		V_copy.push_back(Vi);
 	}
@@ -104,17 +114,17 @@ int main()
 	for(int j = 0; j < T - 1; j++)
 	{
 		int V1, D, V2;
-		std::cin >> V1 >> D >> V2;
+		input >> V1 >> D >> V2;
 		conexiones[V1 - 1].push_back(conexion(D, V2 - 1));
 		conexiones_copy[V1 - 1].push_back(conexion(D, V2 - 1));
 	}
 
 	//lectura de preguntas
-	std::cin >> Q;
+	input >> Q;
 	for(int k = 0; k < Q; k++)
 	{
 		int Ki;
-		std::cin >> Ki;
+		input >> Ki;
 
 		contadorTanques = 0;
 		analizarContenedor(Ki, 0);
@@ -122,6 +132,7 @@ int main()
 		conexiones = conexiones_copy;
 		respuestas.push_back(contadorTanques);
 	}
+	input.close();
 
 	//impresion de respuestas
 	for(int r = 0; r < Q; r++)
