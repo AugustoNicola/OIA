@@ -1,7 +1,7 @@
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <algorithm>
 
 struct conexion
@@ -9,30 +9,25 @@ struct conexion
 	int distancia, final;
 	conexion(int D, int V2) : distancia(D), final(V2) {};
 };
+struct menorDistancia {
+    bool operator() (const conexion& a, const conexion& b) const {
+        return a.distancia <= b.distancia;
+    }
+};
 
 std::vector<int> V, V_copy, respuestas;
-std::vector<std::vector<conexion> > conexiones, conexiones_copy;
+std::vector<std::priority_queue<conexion, std::vector<conexion>, menorDistancia> > conexiones, conexiones_copy;
 int contadorTanques;
 
 int analizarContenedor(int litrosRestantes, int contenedor)
 {
 	bool contenedorActualConAgua = false;
+	const conexion* conexionMasBaja;
 
-	while(true)
+	do
 	{
 		// ? calcula la conexion mas baja de haber
-		conexion *conexionMasBaja = nullptr;
-		for(conexion &tuberia : conexiones[contenedor])
-		{
-			if(conexionMasBaja == nullptr) 
-			{
-				conexionMasBaja = &tuberia;
-			} else {
-				conexionMasBaja = (tuberia.distancia > conexionMasBaja->distancia
-			? &tuberia : conexionMasBaja);
-			}
-			
-		}
+		conexionMasBaja = (!conexiones[contenedor].empty() ? &conexiones[contenedor].top() : nullptr);
 
 		// ? llena hasta encontrar una tuberia o el techo
 		if(litrosRestantes > 0)
@@ -72,10 +67,10 @@ int analizarContenedor(int litrosRestantes, int contenedor)
 			// elimina el elemento del vector
 			if(V[conexionMasBaja->final] == 0) 
 			{
-				conexiones[contenedor].erase(std::remove_if(conexiones[contenedor].begin(), conexiones[contenedor].end(), [conexionMasBaja](const conexion con){return con.final == conexionMasBaja->final;}), conexiones[contenedor].end());
+				conexiones[contenedor].pop();
 			};
 		} else {break;} // ! sale de la ejecucion si no puede seguir
-	}
+	}while(litrosRestantes > 0 && conexionMasBaja != nullptr);
 
 	// * devuelve la cantidad de litros que quedaron, tanto sea porque no quedaron como porque no se puede llenar mas
 	return litrosRestantes;
@@ -94,20 +89,18 @@ int main()
 		int Vi;
 		std::cin >> Vi;
 		V.push_back(Vi);
-		V_copy.push_back(Vi);
 	}
-
+	V_copy = V;
 
 	//lectura de conexiones
 	conexiones.resize(T); //conexiones[0] es contenedor "1"
-	conexiones_copy.resize(T);
 	for(int j = 0; j < T - 1; j++)
 	{
 		int V1, D, V2;
 		std::cin >> V1 >> D >> V2;
-		conexiones[V1 - 1].push_back(conexion(D, V2 - 1));
-		conexiones_copy[V1 - 1].push_back(conexion(D, V2 - 1));
+		conexiones[V1 - 1].push(conexion(D, V2 - 1));
 	}
+	conexiones_copy = conexiones;
 
 	//lectura de preguntas
 	std::cin >> Q;
