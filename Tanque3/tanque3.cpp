@@ -15,73 +15,62 @@ struct menorDistancia {
     }
 };
 
-std::vector<int> V, V_copy, respuestas;
+int T, Q;
+std::vector<int> V, V_copy, padre, respuestas;
 std::vector<std::priority_queue<conexion, std::vector<conexion>, menorDistancia> > conexiones, conexiones_copy;
-int contadorTanques;
 
-int analizarContenedor(int litrosRestantes, int contenedor)
+int analizarContenedor(int litrosRestantes)
 {
-	bool contenedorActualConAgua = false;
-	const conexion* conexionMasBaja;
+	std::vector<bool> tanqueConAgua(T, false);
+	int contadorTanquesConAgua = 0;
 
-	do
+	int tanqueActual = 0;
+	const conexion* conexionMasBaja = nullptr;
+
+	while(true)
 	{
 		// ? calcula la conexion mas baja de haber
-		conexionMasBaja = (!conexiones[contenedor].empty() ? &conexiones[contenedor].top() : nullptr);
+		conexionMasBaja = (!conexiones[tanqueActual].empty() ? &conexiones[tanqueActual].top() : nullptr);
 
 		// ? llena hasta encontrar una tuberia o el techo
-		if(litrosRestantes > 0)
+		
+		int litrosLlenados = V[tanqueActual] - (conexionMasBaja != nullptr ? conexionMasBaja->distancia : 0);
+
+		V[tanqueActual] -= litrosLlenados;
+		litrosRestantes -= litrosLlenados;
+
+		if(!tanqueConAgua[tanqueActual] && litrosLlenados > 0)
 		{
-			if(conexionMasBaja != nullptr)
-			{
-				// * hay conexiones disponibles, asi que resta lo que se pueda hasta la conexion mas baja
-				int remanente = V[contenedor] - conexionMasBaja->distancia;
-				int litrosLlenados = std::min(litrosRestantes, remanente);
-				V[contenedor] -= litrosLlenados;
-				litrosRestantes -= litrosLlenados;
-
-				if(litrosLlenados > 0 && !contenedorActualConAgua)
-				{
-					contadorTanques++;
-					contenedorActualConAgua = true;
-				}
-			} else {
-				// * no hay conexiones disponibles, asi que resta lo que se pueda del contenedor entero
-				int litrosLlenados = std::min(litrosRestantes, V[contenedor]);
-				V[contenedor] -= litrosLlenados;
-				litrosRestantes -= litrosLlenados;
-
-				if(!contenedorActualConAgua && litrosLlenados != 0)
-				{
-					contadorTanques++;
-					contenedorActualConAgua = true;
-				}
-			}
+			contadorTanquesConAgua++;
+			tanqueConAgua[tanqueActual] = true;
 		}
 
-		// ? verifica si se puede seguir
-		if(litrosRestantes > 0 && conexionMasBaja != nullptr)
+		if (litrosRestantes <= 0)
 		{
-			// * hay conexiones disponibles, asi que debe llamar recursivamente a la funcion con los litros restantes
-			litrosRestantes = analizarContenedor(litrosRestantes, conexionMasBaja->final);
-			// elimina el elemento del vector
-			if(V[conexionMasBaja->final] == 0) 
-			{
-				conexiones[contenedor].pop();
-			};
-		} else {break;} // ! sale de la ejecucion si no puede seguir
-	}while(litrosRestantes > 0 && conexionMasBaja != nullptr);
+			break;
+		}
+		else if (conexionMasBaja != nullptr)
+		{
+			tanqueActual = conexionMasBaja->final;
+			conexiones[padre[tanqueActual]].pop();
 
-	// * devuelve la cantidad de litros que quedaron, tanto sea porque no quedaron como porque no se puede llenar mas
-	return litrosRestantes;
+		}
+		else if (tanqueActual != 0)
+		{
+			tanqueActual = padre[tanqueActual];
+		}
+		else
+		{
+			break; //no hay mas tanques a llenar
+		}
+	}
+
+	return contadorTanquesConAgua;
 	
 }
 
 int main()
 {
-	
-	int T, Q;
-
 	// lectura de tanques y capacidades
 	std::cin >> T;
 	for(int i = 0; i < T; i++)
@@ -94,11 +83,13 @@ int main()
 
 	//lectura de conexiones
 	conexiones.resize(T); //conexiones[0] es contenedor "1"
+	padre.resize(T); padre[0] = -1;
 	for(int j = 0; j < T - 1; j++)
 	{
 		int V1, D, V2;
 		std::cin >> V1 >> D >> V2;
 		conexiones[V1 - 1].push(conexion(D, V2 - 1));
+		padre[V2 - 1] = V1 - 1;
 	}
 	conexiones_copy = conexiones;
 
@@ -109,11 +100,10 @@ int main()
 		int Ki;
 		std::cin >> Ki;
 
-		contadorTanques = 0;
-		analizarContenedor(Ki, 0);
+		respuestas.push_back(analizarContenedor(Ki));
+		
 		V = V_copy;
 		conexiones = conexiones_copy;
-		respuestas.push_back(contadorTanques);
 	}
 
 	//impresion de respuestas
