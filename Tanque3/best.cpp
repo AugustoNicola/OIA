@@ -59,8 +59,9 @@ int main() {
     int q; cin >> q;
     forn(i,q){
         int x; cin >> x;
-        if(i) cout << ' ';
-        cout << upper_bound(r,r+n,x)-r; //! wtf
+        std::cout << "\nr: " << r << " (" << *r << ")" << std::endl;
+		std::cout << "upper: " << upper_bound(r,r+n,x) << " (" << *upper_bound(r,r+n,x) << ")" << std::endl;
+        std::cout << "menos r: respuesta final:" << upper_bound(r,r+n,x)-r << std::endl; //! wtf
     }
     cout << endl;
     return 0;
