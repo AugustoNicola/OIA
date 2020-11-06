@@ -1,17 +1,13 @@
 #include <vector>
 #include <fstream>
+#include <limits>
+#include <algorithm>
 
-std::vector<std::vector<int> > grilla;
+unsigned int MAX = std::numeric_limits<unsigned int>::max();
+
+std::vector<std::vector<unsigned int> > grilla;
 std::vector<int> alturasPajara;
 std::vector<int> mejoresAlturas;
-
-int min(int x, int y, int z)
-{
-	int min = x;
-	min = y < min ? y : min;
-	min = z < min ? z : min; 
-	return min;
-}
 
 int main()
 {
@@ -21,12 +17,12 @@ int main()
 	std::ifstream input;
 	input.open("vuelo.in");
 
-	int I; input >> I;
-	alturasPajara.resize(++I); alturasPajara[0] = 0;
+	int I; input >> I; I++;
+	alturasPajara.resize(I); alturasPajara[0] = 0;
 	mejoresAlturas.resize(I); mejoresAlturas[0] = 0;
 	
 	grilla.resize(I);
-	for(auto& g : grilla) g.resize(301, 301);
+	for(auto& g : grilla) g.resize(301, MAX);
 	grilla[0][0] = 0; //inicializa valor inicial
 
 	for(int i = 1; i < I; i++)
@@ -41,18 +37,17 @@ int main()
 	{
 		for(int fil = 0; fil < 301; fil++)
 		{
-			int mejorPrevio = min(
-				(fil > 0 ? grilla[col-1][fil-1] : 301),
-				grilla[col-1][fil],
-				(fil < 300 ? grilla[col-1][fil+1] : 301)
+			unsigned int mejorPrevio = std::min(
+				(fil > 0 ? grilla[col-1][fil-1] : MAX),
+				(fil < 300 ? grilla[col-1][fil+1] : MAX)
 			);
 
-			if(mejorPrevio != 301) grilla[col][fil] = mejorPrevio + abs(fil - alturasPajara[col]);
+			if(mejorPrevio != MAX) grilla[col][fil] = mejorPrevio + abs(fil - alturasPajara[col]);
 		}
 	}
 
 	//elije la mejor de la ultima casilla
-	int mejorDistanciaTotal = 301;
+	unsigned int mejorDistanciaTotal = MAX;
 	for(int fil = 0; fil < 301; fil++)
 	{
 		if(grilla[I-1][fil] < mejorDistanciaTotal)
@@ -62,15 +57,15 @@ int main()
 		}
 	}
 
+	//elije camino a tomar
 	for(int col = I-2; col >= 0; col--)
 	{
 		int fil = mejoresAlturas[col+1];
 
-		int mejorFila = fil;
-		if(fil > 0 && grilla[col][fil-1] < grilla[col][mejorFila]) mejorFila = fil-1;
-		if(fil < 300 && grilla[col][fil+1] < grilla[col][mejorFila]) mejorFila = fil+1;
-
-		mejoresAlturas[col] = mejorFila;
+		mejoresAlturas[col] = (
+			(fil > 0 ? grilla[col][fil-1] : MAX) < (fil < 300 ? grilla[col][fil+1] : MAX)
+			? fil-1 : fil+1
+		);
 	}
 
 	std::ofstream output;
@@ -78,9 +73,9 @@ int main()
 
 	output << mejorDistanciaTotal;
 	
-	for(int& altura : mejoresAlturas)
+	for(int i = 1; i < I; i++)
 	{
-		output << std::endl << altura;
+		output << std::endl << mejoresAlturas[i];
 	}
 
 	return 0;
