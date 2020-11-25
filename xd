@@ -1,0 +1,8 @@
+vector<string> mapa = {
+		"...#",
+		"#...",
+		"E..#",
+		"E..#"
+	};
+	vector<int> pF = {1, 0, 0, 2, 3};
+	vector<int> pC = {3, 0, 1, 0, 0};
