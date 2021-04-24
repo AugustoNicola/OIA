@@ -52,6 +52,6 @@ int nivelacion(string s) {
 
 int main()
 {
-	int respuesta = nivelacion("an");
+	int respuesta = nivelacion("holh");
 	return 0;
 }

@@ -86,6 +86,6 @@ void algarin(std::string nombreArchivo)
 
 int main()
 {
-	algarin("input.txt");
+	algarin("input.in");
 	return 0;
 }
